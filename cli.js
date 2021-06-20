@@ -22,7 +22,8 @@ const OPTIONS = [
     'clear',
     'train',
     'similarity',
-    'analogy'
+    'analogy',
+    'predict'
 ]
 
 if (process.argv.length < 3) showUsage();
@@ -58,6 +59,10 @@ async function cli() {
                 );
                 console.log(`similarity search completed.`);
                 break;
+            case 'predict':
+                await predict(process.argv[3], process.argv[4] || null);
+                console.log(`predict search completed.`);
+                break;
             default:
                 break;
         }
@@ -79,6 +84,7 @@ async function clear(filePath) {
 
 function clearText(text) {
     return text
+        .sansAccent()
         .toLowerCase()
         .replace(/[^A-Za-zА-Яа-яЁёЇїІіҐґЄє0-9\-]|\s]/g, ' ')
         .replace(/\s{2,}/g, ' ');
@@ -89,7 +95,11 @@ async function train(corpusFilePath, vectorSize = 100) {
     return new Promise(resolve => {
         w2v.word2vec(corpusFilePath, 'vectors.txt', {
             size: vectorSize,
-            binary: 0
+            alpha: 0.025,
+            binary: 0,
+            cbow: 0,
+            minCount:2,
+            window: 2
         }, () => {
             console.log('DONE');
             resolve();
@@ -98,7 +108,7 @@ async function train(corpusFilePath, vectorSize = 100) {
 }
 
 // Similarity option
-function similarity(word, number_neighbors = 10) {
+function similarity(word, number_neighbors = 5) {
     return new Promise((resolve, reject) => {
         w2v.loadModel('vectors.txt', (error, model) => {
             if (error) reject();
@@ -106,7 +116,7 @@ function similarity(word, number_neighbors = 10) {
             console.log('WORDS: ', model.words);
         
             console.time('mostSimilar');
-            console.log(model.mostSimilar(word, number_neighbors));
+            console.log(model.mostSimilar(word, 5));
             console.timeEnd('mostSimilar');
 
             resolve()
@@ -114,7 +124,7 @@ function similarity(word, number_neighbors = 10) {
     });
 }
 
-function analogy(word, pair, number_neighbors = 10) {
+function analogy(word, pair, number_neighbors = 5) {
     return new Promise((resolve, reject) => {
         w2v.loadModel('vectors.txt', (error, model) => {
             if (error) reject();
@@ -132,4 +142,40 @@ function analogy(word, pair, number_neighbors = 10) {
             resolve()
         });
     });
+}
+
+function predict(word, number_neighbors=5){
+    return new Promise((resolve, reject) => {
+        w2v.loadModel('vectors.txt', (error, model) => {
+            if (error) reject();
+            console.log('SIZE: ', model.size);
+            console.log('WORDS: ', model.words);
+
+            console.time('predict');
+            console.log(model.getNearestWords(model.getVector(word), number_neighbors));
+            console.timeEnd('predict');
+
+            resolve()
+        });
+    });
+}
+
+String.prototype.sansAccent =function() {
+    var accent = [
+        /[\300-\306]/g, /[\340-\346]/g, // A, a
+        /[\310-\313]/g, /[\350-\353]/g, // E, e
+        /[\314-\317]/g, /[\354-\357]/g, // I, i
+        /[\322-\330]/g, /[\362-\370]/g, // O, o
+        /[\331-\334]/g, /[\371-\374]/g, // U, u
+        /[\321]/g, /[\361]/g, // N, n
+        /[\307]/g, /[\347]/g, // C, c
+    ];
+    var noaccent = ['A','a','E','e','I','i','O','o','U','u','N','n','C','c'];
+
+    var str = this;
+    for(var i = 0; i < accent.length; i++){
+        str = str.replace(accent[i], noaccent[i]);
+    }
+
+    return str;
 }
