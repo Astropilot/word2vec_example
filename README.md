@@ -24,6 +24,9 @@ Usage: node cli.js <option> <params>
         <pair_word_1>      first word of the analogy pair
         <pair_word_2>      second word of the analogy pair
         <number_analogies> optional, amount of analogies to show
+    option 3: predict <word> <number_neighbors>
+        <word>             for which want find nearest neighbors
+        <number_neighbors> optional, amount of neighbors to show
 ```
 
 Commands for this cli examples:
@@ -31,6 +34,7 @@ Commands for this cli examples:
 ```
 node cli.js clear file
 node cli.js train file_cleared
-node cli.js similarity arya
-node cli.js analogy daenerys cersei queen
+node cli.js similarity manger
+node cli.js analogy manger boire banane
+node cli.js predict manger
 ```
