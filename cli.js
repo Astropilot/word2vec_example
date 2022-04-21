@@ -1,6 +1,6 @@
 const path = require('path');
 const fs   = require('fs-extra');
-const w2v  = require('word2vec');
+const w2v  = require('word2vec-win');
 
 function showUsage() {
     console.log('Usage: node cli.js <option> <params>');

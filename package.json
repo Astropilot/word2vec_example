@@ -5,7 +5,7 @@
   "main": "cli.js",
   "dependencies": {
     "fs-extra": "^7.0.0",
-    "word2vec": "^1.1.2"
+    "word2vec-win": "git+https://github.com/Astropilot/node-word2vec-win.git"
   },
   "devDependencies": {},
   "scripts": {
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/unsigned6/word2vec_example.git"
+    "url": "git+https://github.com/Astropilot/word2vec_example.git"
   },
   "keywords": [
     "word2vec"
@@ -21,7 +21,7 @@
   "author": "Yurii Vlasiuk",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/unsigned6/word2vec_example/issues"
+    "url": "https://github.com/Astropilot/word2vec_example/issues"
   },
-  "homepage": "https://github.com/unsigned6/word2vec_example#readme"
+  "homepage": "https://github.com/Astropilot/word2vec_example#readme"
 }
